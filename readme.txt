@@ -3,7 +3,7 @@ Contributors: lencinhaus
 Tags: p2p, wpml, sitepress, icanlocalize, posts-to-posts, posts-2-posts, posts to posts, posts-to-posts
 Requires at least: 3.2.1
 Tested up to: 3.2.1
-Stable tag: trunk
+Stable tag: 1.0
 
 Integration between WPML and Posts 2 Posts.
 
