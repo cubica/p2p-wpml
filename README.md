@@ -17,7 +17,7 @@ Features
 Installation
 ------------
 
-Just extract the downloadable archive in a folder named *p2p-wpml* inside *wp-content/plugins*.
+Just extract the downloadable archive in a folder named *p2p-wpml* inside *wp-content/plugins*, and activate in Wordpress administration.
 
 Caveats
 -------
