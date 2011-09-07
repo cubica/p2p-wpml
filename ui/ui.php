@@ -2,7 +2,7 @@
 
 class P2P_WPML_UI {
 	public static function init() {
-		add_action( 'add_meta_boxes', array(__CLASS__, 'register_js') );
+		if(P2P_WPML_Admin::shouldFilter()) add_action( 'add_meta_boxes', array(__CLASS__, 'register_js') );
 	}
 	
 	public static function register_js() {
