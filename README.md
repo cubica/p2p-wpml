@@ -21,7 +21,7 @@ Features
 Installation
 ------------
 
-1. Extract the downloadable archive in a folder named *p2p-wpml* inside *wp-content/plugins*, and activate in Wordpress administration.
+1. Extract the downloadable archive inside *wp-content/plugins*, and activate in Wordpress administration.
 1. The plugin can be configured accessing the **Posts 2 Posts** link inside the **WPML** settings menu.
 
 **IMPORTANT**: 
