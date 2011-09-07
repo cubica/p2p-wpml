@@ -19,14 +19,16 @@ class P2P_WPML_Synchronizer {
 	private static $inHandler = false;
 	
 	public static function init() {
-		// add a query filter for catching P2P connect/disconnect actions
-		add_filter('query', array(__CLASS__, 'filter_query'));
-		
-		// add a edit_post action for catching post editing
-		add_action('edit_post', array(__CLASS__, 'edit_post'), 20, 1);
-		
-		// add a save_post action for catching post creation
-		add_action('save_post', array(__CLASS__, 'save_post'), 20, 2);
+		if(P2P_WPML_Admin::shouldSynchronize()) {
+			// add a query filter for catching P2P connect/disconnect actions
+			add_filter('query', array(__CLASS__, 'filter_query'));
+			
+			// add a edit_post action for catching post editing
+			add_action('edit_post', array(__CLASS__, 'edit_post'), 20, 1);
+			
+			// add a save_post action for catching post creation
+			add_action('save_post', array(__CLASS__, 'save_post'), 20, 2);
+		}
 	}
 	
 	public static function filter_query($query) {
