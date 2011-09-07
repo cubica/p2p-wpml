@@ -15,6 +15,7 @@ This plugin has been only tested with Wordpress version 3.2.1, WPML version 2.3.
 
 = Features =
 
+
 * **Synchronization of connections between translations**:
 
 	* when a new connection is created between two posts (the origin and the destination), each translation of the origin will be connected to the translation of the destination in the corresponding language (if both exist);
@@ -25,6 +26,7 @@ This plugin has been only tested with Wordpress version 3.2.1, WPML version 2.3.
 
 	* without this plugin, when you edit a post translation (not in the default language), the P2P metaboxes only show connectable posts in the default language.
 
+Links: [**Github**](https://github.com/cubica/p2p-wpml) | [Author's Site](http://www.cubica.eu)
 
 == Installation ==
 
