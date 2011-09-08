@@ -44,7 +44,7 @@ Answer
 
 == Screenshots == 
 
-1. p2p-wpml settings administration.
+1. Settings management
 
 == Changelog ==
  
