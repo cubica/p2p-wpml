@@ -25,6 +25,11 @@ This plugin has been only tested with Wordpress version 3.2.1, WPML version 2.3.
 * **Only connectable posts in the current language are shown in the P2P metaboxes**:
 
 	* without this plugin, when you edit a post translation (not in the default language), the P2P metaboxes only show connectable posts in the default language.
+	
+= Caveats =
+
+* Currently this plugin doesn't manage multiple connections between the same posts (a single connection will be created between the translated posts).
+* Currently the synchronization feature is NOT retroactive: all connections created before plugin activation will not be synchronized (it can still be done manually as without the plugin).
 
 Links: [**Github**](https://github.com/cubica/p2p-wpml) | [Author's Site](http://www.cubica.eu)
 
