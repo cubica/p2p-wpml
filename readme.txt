@@ -1,9 +1,9 @@
 === p2p-wpml === 
-Contributors: lencinhaus
+Contributors: lencinhaus, baden03, twinpictures
 Tags: p2p, wpml, sitepress, icanlocalize, posts-to-posts, posts-2-posts, posts to posts, posts-to-posts
 Requires at least: 3.2.1
-Tested up to: 3.2.1
-Stable tag: 1.0
+Tested up to: 3.4.1
+Stable tag: 1.1
 
 Integration between WPML and Posts 2 Posts.
 
@@ -31,7 +31,7 @@ This plugin has been only tested with Wordpress version 3.2.1, WPML version 2.3.
 * Currently this plugin doesn't manage multiple connections between the same posts (a single connection will be created between the translated posts).
 * Currently the synchronization feature is NOT retroactive: all connections created before plugin activation will not be synchronized (it can still be done manually as without the plugin).
 
-Links: [**Github**](https://github.com/cubica/p2p-wpml) | [Author's Site](http://www.cubica.eu)
+Links: [**Github**](https://github.com/cubica/p2p-wpml) | [Author's Site](http://www.cubica.eu) | [Twinpictures](http://plugins.twinpictures.de)
 
 == Installation ==
 
@@ -52,10 +52,15 @@ Answer
 1. Settings management
 
 == Changelog ==
- 
+
+= 1.1 = 
+* Correctly loads the ui.js script for p2p v.1.3.1+
+
 = 1.0 = 
 * First version 
 
-== Upgrade Notice == 
+== Upgrade Notice ==
+= 1.0 =
+Updated to work with p2p v.1.3.1+
 = 1.0 =
 First version
