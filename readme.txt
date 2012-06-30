@@ -1,17 +1,17 @@
 === p2p-wpml === 
-Contributors: lencinhaus
+Contributors: lencinhaus, baden03, twinpictures
 Tags: p2p, wpml, sitepress, icanlocalize, posts-to-posts, posts-2-posts, posts to posts, posts-to-posts
 Requires at least: 3.2.1
-Tested up to: 3.2.1
-Stable tag: 1.0
+Tested up to: 3.4.1
+Stable tag: 1.1
 
 Integration between WPML and Posts 2 Posts.
 
 == Description ==
 
-**p2p-wpml** is a [Wordpress](http://wordpress.org/) plugin that integrates [iCanLocalize's WPML](http://wpml.org/) and [Posts 2 Posts](http://scribu.net/wordpress/posts-to-posts).
+**p2p-wpml** is a [WordPress](http://wordpress.org/) plugin that integrates [iCanLocalize's WPML](http://wpml.org/) and [Posts 2 Posts](http://scribu.net/wordpress/posts-to-posts).
 
-This plugin has been only tested with Wordpress version 3.2.1, WPML version 2.3.3 and 2.3.4, and Posts 2 Posts version 0.8; different versions of Wordpress or the plugins may break this plugin's functionality so use it at your own risk.
+This plugin has been tested with WordPress version 3.4.1, WPML version 2.5.2, and Posts 2 Posts version 1.3.1. Earlier versions of the Posts 2 Posts are not compatible with this plugin.
 
 = Features =
 
@@ -31,11 +31,11 @@ This plugin has been only tested with Wordpress version 3.2.1, WPML version 2.3.
 * Currently this plugin doesn't manage multiple connections between the same posts (a single connection will be created between the translated posts).
 * Currently the synchronization feature is NOT retroactive: all connections created before plugin activation will not be synchronized (it can still be done manually as without the plugin).
 
-Links: [**Github**](https://github.com/cubica/p2p-wpml) | [Author's Site](http://www.cubica.eu)
+Links: [**Github**](https://github.com/cubica/p2p-wpml) | [Author's Site](http://www.cubica.eu) | [Twinpictures](http://plugins.twinpictures.de)
 
 == Installation ==
 
-1. Extract the downloadable archive inside *wp-content/plugins*, and activate in Wordpress administration.
+1. Extract the downloadable archive inside *wp-content/plugins*, and activate in WordPress administration.
 1. The plugin can be configured accessing the **Posts 2 Posts** link inside the **WPML** settings menu.
 
 **IMPORTANT**: 
@@ -52,10 +52,15 @@ Answer
 1. Settings management
 
 == Changelog ==
- 
+
+= 1.1 = 
+* Correctly loads the ui.js script for p2p v.1.3.1+
+
 = 1.0 = 
 * First version 
 
-== Upgrade Notice == 
+== Upgrade Notice ==
+= 1.0 =
+Updated to work with p2p v.1.3.1+
 = 1.0 =
 First version
