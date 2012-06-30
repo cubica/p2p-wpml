@@ -9,9 +9,9 @@ Integration between WPML and Posts 2 Posts.
 
 == Description ==
 
-**p2p-wpml** is a [Wordpress](http://wordpress.org/) plugin that integrates [iCanLocalize's WPML](http://wpml.org/) and [Posts 2 Posts](http://scribu.net/wordpress/posts-to-posts).
+**p2p-wpml** is a [WordPress](http://wordpress.org/) plugin that integrates [iCanLocalize's WPML](http://wpml.org/) and [Posts 2 Posts](http://scribu.net/wordpress/posts-to-posts).
 
-This plugin has been only tested with Wordpress version 3.2.1, WPML version 2.3.3 and 2.3.4, and Posts 2 Posts version 0.8; different versions of Wordpress or the plugins may break this plugin's functionality so use it at your own risk.
+This plugin has been tested with WordPress version 3.4.1, WPML version 2.5.2, and Posts 2 Posts version 1.3.1. Earlier versions of the Posts 2 Posts are not compatible with this plugin.
 
 = Features =
 
@@ -35,7 +35,7 @@ Links: [**Github**](https://github.com/cubica/p2p-wpml) | [Author's Site](http:/
 
 == Installation ==
 
-1. Extract the downloadable archive inside *wp-content/plugins*, and activate in Wordpress administration.
+1. Extract the downloadable archive inside *wp-content/plugins*, and activate in WordPress administration.
 1. The plugin can be configured accessing the **Posts 2 Posts** link inside the **WPML** settings menu.
 
 **IMPORTANT**: 
