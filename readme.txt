@@ -60,7 +60,7 @@ Answer
 * First version 
 
 == Upgrade Notice ==
-= 1.0 =
+= 1.1 =
 Updated to work with p2p v.1.3.1+
 = 1.0 =
 First version
