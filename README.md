@@ -3,22 +3,7 @@ P2P-WPML
 
 **p2p-wpml** is a [Wordpress](http://wordpress.org/) plugin that integrates [iCanLocalize's WPML](http://wpml.org/) and [Posts 2 Posts](http://scribu.net/wordpress/posts-to-posts).
 
-The following table shows version compatibility between this plugin, other plugins and Wordpress:
-
-<table>
-  <tr>
-    <th>P2P-WPML version</th><th>P2P version</th><th>WPML version</th><th>Wordpress version</th>
-  </tr>
-  <tr>
-    <th>1.0</th><td>0.8</td><td>2.3.3
-    2.3.4</td><td>3.2.1</td>
-  </tr>
-  <tr>
-    <th>1.1</th><td>1.3.1</td><td>2.5.2</td><td>3.4.1</td>
-  </tr>
-</table>
-
-This plugin has been only tested with the above version combinations; different versions of Wordpress or the plugins may break this plugin's functionality so use it at your own risk.
+This plugin has been only tested with specific versions of P2P, WPML and Wordpress (see the [compatibility matrix in the Wiki](wiki/Version-Compatibility-Matrix)); different versions  may break this plugin's functionality so use it at your own risk.
 
 Features
 --------
