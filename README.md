@@ -1,9 +1,37 @@
 P2P-WPML
 ========
 
-**p2p-wpml** is a [WordPress](http://wordpress.org/) plugin that integrates [iCanLocalize's WPML](http://wpml.org/) and [Posts 2 Posts](http://scribu.net/wordpress/posts-to-posts).
+**p2p-wpml** is a [Wordpress](http://wordpress.org/) plugin that integrates [iCanLocalize's WPML](http://wpml.org/) and [Posts 2 Posts](http://scribu.net/wordpress/posts-to-posts).
 
-This plugin has been tested with WordPress version 3.4.1, WPML version 2.5.2, and Posts 2 Posts version 1.3.1. Earlier versions of the Posts 2 Posts are not compatible with this plugin.
+The following table shows version compatibility between this plugin, other plugins and Wordpress:
+
+<table border="1" cellpadding="5" style="border-collapse: collapse;">
+	<thead>
+		<tr>
+			<th>P2P-WPML version</th>
+			<th>P2P version</th>
+			<th>WPML version</th>
+			<th>Wordpress version</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>1.0</strong></td>
+			<td>0.8</td>
+			<td>2.3.3<br />
+			2.3.4</td>
+			<td>3.2.1</td>
+		</tr>
+		<tr>
+			<td><strong>1.1</strong></td>
+			<td>1.3.1</td>
+			<td>2.5.2</td>
+			<td>3.4.1</td>
+		</tr>
+	</tbody>
+</table>
+
+This plugin has been only tested with the above version combinations; different versions of Wordpress or the plugins may break this plugin's functionality so use it at your own risk.
 
 Features
 --------
@@ -22,7 +50,7 @@ Features
 Installation
 ------------
 
-1. Extract the downloadable archive inside *wp-content/plugins*, and activate in WordPress administration.
+1. Extract the downloadable archive inside *wp-content/plugins*, and activate in Wordpress administration.
 1. The plugin can be configured accessing the **Posts 2 Posts** link inside the **WPML** settings menu.
 
 **IMPORTANT**: 
