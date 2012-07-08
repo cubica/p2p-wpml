@@ -2,6 +2,8 @@
 class P2P_WPML_Synchronizer {
 	private static $editedPostIds = array();
 
+	private static $inHandler = false;
+
 	public static function init() {
 		if(P2P_WPML_Admin::shouldSynchronize()) {
 			add_action('p2p_created_connection', array(__CLASS__, 'p2p_insert'));
