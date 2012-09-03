@@ -1,27 +1,14 @@
 <?php
 class P2P_WPML_Synchronizer {
-	const P2P_INSERT_PATTERN_FORMAT = "/INSERT INTO `%s` \(`p2p_type`,`p2p_from`,`p2p_to`\) VALUES \('([^']+)','([0-9]+)','([0-9]+)'\)/";
-	const P2P_DELETE_PATTERN_FORMAT = "/DELETE FROM %s WHERE p2p_id IN \(([0-9,]+)\)/";
-	
 	private static $editedPostIds = array();
-	
-	private static $handlerMap = array(
-		array(
-			'pattern' => self::P2P_INSERT_PATTERN_FORMAT,
-			'handler' => 'p2p_insert'
-		),
-		array(
-			'pattern' => self::P2P_DELETE_PATTERN_FORMAT,
-			'handler' => 'p2p_delete'
-		)
-	);
 	
 	private static $inHandler = false;
 	
 	public static function init() {
 		if(P2P_WPML_Admin::shouldSynchronize()) {
-			// add a query filter for catching P2P connect/disconnect actions
-			add_filter('query', array(__CLASS__, 'filter_query'));
+			// add p2p hooks
+			add_action('p2p_created_connection', array(__CLASS__, 'p2p_insert'));
+			add_action('p2p_delete_connections', array(__CLASS__, 'p2p_delete'));
 			
 			// add a edit_post action for catching post editing
 			add_action('edit_post', array(__CLASS__, 'edit_post'), 20, 1);
@@ -29,28 +16,6 @@ class P2P_WPML_Synchronizer {
 			// add a save_post action for catching post creation
 			add_action('save_post', array(__CLASS__, 'save_post'), 20, 2);
 		}
-	}
-	
-	public static function filter_query($query) {
-		global $wpdb;
-		foreach(self::$handlerMap as $handlerDef) {
-			$pattern = sprintf($handlerDef['pattern'], $wpdb->p2p);
-			if(preg_match($pattern, $query, $matches)) {
-				if(self::$inHandler === false) {
-					self::$inHandler = true;
-					
-					$handler = array(__CLASS__, $handlerDef['handler']);
-					array_shift($matches);
-					call_user_func_array($handler, $matches);
-					
-					self::$inHandler = false;
-				}
-				
-				break; 
-			}
-		}
-		
-		return $query;
 	}
 	
 	public static function edit_post($postId) {
@@ -95,7 +60,9 @@ class P2P_WPML_Synchronizer {
 			$lang = $languageDetails->language_code;
 			$sourceLang = $languageDetails->source_language_code;
 		}
-		else return;
+		else {	
+			return;
+		}
 		
 		// get the source translation id
 		$translationIds = self::get_translation_ids_except_post($trId, $post);
@@ -104,164 +71,203 @@ class P2P_WPML_Synchronizer {
 			$sourceTranslationId = $translationIds[$sourceLang];
 			
 			// get connection types
-			$types = self::get_connection_types();
+			$connectionTypes = P2P_Connection_Type_Factory::get_all_instances();
 			
-			foreach($types as $type) {
+			foreach($connectionTypes as $connectionTypeName => $connectionType) {
 				$connections = array();
 				
-				// get the connections originating from the source translation
-				$fromConnections = p2p_get_connections($type, array(
-					'direction' => 'from',
-					'from' => $sourceTranslationId
-				));
+				$isFromPost = $connectionType->object['from'] == 'post';
+				$isToPost = $connectionType->object['to'] == 'post';
 				
-				// for each from connection of the source translation, find the corresponding
-				// translation in the current language
-				foreach($fromConnections as $fromConnection) {
-					$toPostId = $fromConnection->p2p_to;
+				if($isFromPost) {
+					// get the connections originating from the source translation
+					$fromConnections = p2p_get_connections($connectionTypeName, array(
+						'direction' => 'from',
+						'from' => $sourceTranslationId
+					));
 					
-					//check if the destination post is translated
-					if(self::is_post_translated($toPostId)) {
-						$toTranslationIds = self::get_post_translation_ids($toPostId);
-						if(isset($toTranslationIds[$lang])) $connections[] = array(
-							'from' => $postId,
-							'to' => $toTranslationIds[$lang]
-						);
-					}
-					// otherwise, add the connection anyway
-					else {
-						$connections[] = array(
-							'from' => $postId,
-							'to' => $toPostId
-						);
+					// for each from connection of the source translation, find the corresponding
+					// translation in the current language
+					foreach($fromConnections as $fromConnection) {
+						$toPostId = $fromConnection->p2p_to;
+						
+						//check if the destination post is translated
+						if($isToPost && self::is_post_translated($toPostId)) {
+							$toTranslationIds = self::get_post_translation_ids($toPostId);
+							if(isset($toTranslationIds[$lang])) $connections[] = array(
+								'from' => $postId,
+								'to' => $toTranslationIds[$lang]
+							);
+						}
+						// otherwise, add the connection anyway
+						else {
+							$connections[] = array(
+								'from' => $postId,
+								'to' => $toPostId
+							);
+						}
 					}
 				}
 				
-				// get the connections pointing to the source translation
-				$toConnections = p2p_get_connections($type, array(
-					'direction' => 'to',
-					'to' => $sourceTranslationId
-				));
-					
-				// for each to connection of the source translation, find the corresponding
-				// translation in the current language
-				foreach($toConnections as $toConnection) {
-					$fromPostId = $toConnection->p2p_from;
-					
-					//check if the origin post is translated
-					if(self::is_post_translated($fromPostId)) {
-						$fromTranslationIds = self::get_post_translation_ids($fromPostId);
-						if(isset($fromTranslationIds[$lang])) $connections[] = array(
-							'from' => $fromTranslationIds[$lang],
-							'to' => $postId
-						);
-					}
-					// otherwise, add the connection anyway
-					else {
-						$connections[] = array(
-							'from' => $fromPostId,
-							'to' => $postId
-						);
+				if($isToPost) {
+					// get the connections pointing to the source translation
+					$toConnections = p2p_get_connections($connectionTypeName, array(
+						'direction' => 'from',
+						'to' => $sourceTranslationId
+					));
+											
+					// for each to connection of the source translation, find the corresponding
+					// translation in the current language
+					foreach($toConnections as $toConnection) {
+						$fromPostId = $toConnection->p2p_from;
+						
+						//check if the origin post is translated
+						if($isFromPost && self::is_post_translated($fromPostId)) {
+							$fromTranslationIds = self::get_post_translation_ids($fromPostId);
+							if(isset($fromTranslationIds[$lang])) $connections[] = array(
+								'from' => $fromTranslationIds[$lang],
+								'to' => $postId
+							);
+						}
+						// otherwise, add the connection anyway
+						else {
+							$connections[] = array(
+								'from' => $fromPostId,
+								'to' => $postId
+							);
+						}
 					}
 				}
 				
-				if(!empty($connections)) self::create_connections($type, $connections);
+				if(!empty($connections)) {
+					self::create_connections($connectionTypeName, $connections);
+				}
 			}
 		}
 	}
 	
-	private static function p2p_insert($type, $fromId, $toId) {
-		$isFromTranslated = self::is_post_translated($fromId);
-		$isToTranslated = self::is_post_translated($toId);
-
-		$connections = array();
+	public static function p2p_insert($connectionId) {
+		if(self::$inHandler === true) return;
+		self::$inHandler = true;
 		
-		if($isFromTranslated) {
-			$fromTranslationIds = self::get_post_translation_ids($fromId);
-			if($isToTranslated) {
-				$toTranslationIds = self::get_post_translation_ids($toId);
-				foreach($fromTranslationIds as $lang => $fromTranslationId) {
-					if(isset($toTranslationIds[$lang])) {
-						$connections[] = array(
-							'from' => $fromTranslationId,
-							'to' => $toTranslationIds[$lang]
-						);
-					}
-				}
-			}
-			else {
-				foreach($fromTranslationIds as $fromTranslationId) {
-					$connections[] = array(
-						'from' => $fromTranslationId,
-						'to' => $toId
-					);
-				}
-			}
-		}
-		else if($isToTranslated) {
-			$toTranslationIds = self::get_post_translation_ids($toId);
-			foreach($toTranslationIds as $toTranslationId) {
-				$connections[] = array(
-					'from' => $fromId,
-					'to' => $toTranslationId
-				);
-			}
-		}
-		
-		self::create_connections($type, $connections);
-	}
+		try {
+			$connection = p2p_get_connection($connectionId);
+			if(empty($connection)) throw new Exception('Cannot find connection with id ' . $connectionId);
+			
+			$typeObj = P2P_Connection_Type_Factory::get_instance($connection->p2p_type);
+			$isFromPost = $typeObj->object['from'] == 'post';
+			$isToPost = $typeObj->object['to'] == 'post';
 	
-	private static function p2p_delete($idsStr) {
-		$connectionIds = explode(',', $idsStr);
-		foreach($connectionIds as $connectionId) {
-			$connection = self::get_connection_data($connectionId);
-			if(empty($connection)) continue;
-			
-			$deletableConnections = array();
-			
-			$isFromTranslated = self::is_post_translated($connection['from']);
-			$isToTranslated = self::is_post_translated($connection['to']);
-			$args = array(
-				'direction' => 'from',
-				'from' => $connection['from'],
-				'to' => $connection['to']	
-			);
+			$isFromTranslated = $isFromPost && self::is_post_translated($connection->p2p_from);
+			$isToTranslated = $isToPost && self::is_post_translated($connection->p2p_to);
+	
+			$connections = array();
 			
 			if($isFromTranslated) {
-				$fromTranslationIds = self::get_post_translation_ids($connection['from']);
-				
+				$fromTranslationIds = self::get_post_translation_ids($connection->p2p_from);
 				if($isToTranslated) {
-					$toTranslationIds = self::get_post_translation_ids($connection['to']);
-						
+					$toTranslationIds = self::get_post_translation_ids($connection->p2p_to);
 					foreach($fromTranslationIds as $lang => $fromTranslationId) {
-						if(isset($toTranslationIds[$lang])) $deletableConnections[] = array(
-							'from' => $fromTranslationId,
-							'to' => $toTranslationIds[$lang]
-						);
-					}		
+						if(isset($toTranslationIds[$lang])) {
+							$connections[] = array(
+								'from' => $fromTranslationId,
+								'to' => $toTranslationIds[$lang]
+							);
+						}
+					}
 				}
 				else {
 					foreach($fromTranslationIds as $fromTranslationId) {
-						$deletableConnections[] = array(
+						$connections[] = array(
 							'from' => $fromTranslationId,
-							'to' => $connection['to']
+							'to' => $connection->p2p_to
 						);
-					}	
+					}
 				}
 			}
 			else if($isToTranslated) {
-				$toTranslationIds = self::get_post_translation_ids($connection['to']);
-				
+				$toTranslationIds = self::get_post_translation_ids($connection->p2p_to);
 				foreach($toTranslationIds as $toTranslationId) {
-					$deletableConnections[] = array(
-						'from' => $connection['from'],
-						'to' => $toTranslationId	
+					$connections[] = array(
+						'from' => $connection->p2p_from,
+						'to' => $toTranslationId
 					);
 				}
 			}
 			
-			if(!empty($deletableConnections)) self::delete_connections($connection['type'], $deletableConnections);
+			self::create_connections($connection->p2p_type, $connections);
 		}
+		catch(Exception $ex) {
+			if(WP_DEBUG) trigger_error($ex->__toString());
+		}
+		
+		self::$inHandler = false;
+	}
+	
+	public static function p2p_delete($connectionIds) {
+		if(self::$inHandler === true) return;
+		self::$inHandler = true;
+		
+		try {
+			foreach($connectionIds as $connectionId) {
+				$connection = p2p_get_connection($connectionId);
+				if(empty($connection)) throw new Exception('cannot find connection with id ' . $connectionId);
+				
+				$deletableConnections = array();
+				
+				$typeObj = P2P_Connection_Type_Factory::get_instance($connection->p2p_type);
+				$isFromPost = $typeObj->object['from'] == 'post';
+				$isToPost = $typeObj->object['to'] == 'post';
+				$isFromTranslated = $isFromPost && self::is_post_translated($connection->p2p_from);
+				$isToTranslated = $isToPost && self::is_post_translated($connection->p2p_to);
+				
+				$args = array(
+					'direction' => 'from',
+					'from' => $connection->p2p_from,
+					'to' => $connection->p2p_to	
+				);
+				
+				if($isFromTranslated) {
+					$fromTranslationIds = self::get_post_translation_ids($connection->p2p_from);
+					
+					if($isToTranslated) {
+						$toTranslationIds = self::get_post_translation_ids($connection->p2p_to);
+							
+						foreach($fromTranslationIds as $lang => $fromTranslationId) {
+							if(isset($toTranslationIds[$lang])) $deletableConnections[] = array(
+								'from' => $fromTranslationId,
+								'to' => $toTranslationIds[$lang]
+							);
+						}		
+					}
+					else {
+						foreach($fromTranslationIds as $fromTranslationId) {
+							$deletableConnections[] = array(
+								'from' => $fromTranslationId,
+								'to' => $connection->p2p_to
+							);
+						}	
+					}
+				}
+				else if($isToTranslated) {
+					$toTranslationIds = self::get_post_translation_ids($connection->p2p_to);
+					
+					foreach($toTranslationIds as $toTranslationId) {
+						$deletableConnections[] = array(
+							'from' => $connection->p2p_from,
+							'to' => $toTranslationId	
+						);
+					}
+				}
+				
+				if(!empty($deletableConnections)) self::delete_connections($connection->p2p_type, $deletableConnections);
+			}
+		}
+		catch(Exception $ex) {
+			if(WP_DEBUG) trigger_error($ex->__toString());
+		}
+		
+		self::$inHandler = false;
 	}
 	
 	private static function get_post_translation_ids($postId) {
@@ -291,11 +297,6 @@ class P2P_WPML_Synchronizer {
 		return $translationIds;
 	}
 	
-	private static function get_connection_types() {
-		$types = P2P_Connection_Type_Factory::get_all_instances();
-		return array_keys($types);
-	}
-	
 	private static function create_connections($type, $connections) {
 		foreach($connections as $connection) {
 			$fromId = $connection['from'];
@@ -319,19 +320,6 @@ class P2P_WPML_Synchronizer {
 				'to' => $connection['to']
 			));
 		}
-	}
-	
-	private static function get_connection_data($connectionId) {
-		global $wpdb;
-		
-		$sql = "SELECT p2p_type, p2p_from, p2p_to FROM `" . $wpdb->p2p . "` WHERE p2p_id='" . $wpdb->escape($connectionId) . "'";
-		$connection = $wpdb->get_row($sql);
-		if(empty($connection)) return null;
-		return array(
-			'from' => $connection->p2p_from,
-			'to' => $connection->p2p_to,
-			'type' => $connection->p2p_type
-		);
 	}
 	
 	private static function is_post_translated($postId) {
