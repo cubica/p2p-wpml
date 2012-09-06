@@ -12,7 +12,11 @@ Features
 
 	* when a new connection is created between two posts (the origin and the destination), each translation of the origin will be connected to the translation of the destination in the corresponding language (if both exist);
 	* when a connection between two posts is deleted, all the connections between the translations of those two posts will be deleted (where they exist);
-	* when a new translation of a given post is created, for each connection between the original post and another post (the destination), a new connection is created between the translated post and the translation of the destination post in the corresponding language (if it exists).
+	* when a new translation of a given post is created, for each connection between the original post and another post (the destination), a new connection is created between the translated post and the translation of the destination post in the corresponding language (if it exists), and metadata from the original connection are copied to the new connection.
+	
+* **Synchronization of connection metadata between translations**:
+
+	* when metadata are created, updated or deleted on a connection between to posts (the origin and the destination), metadata of connections between the translations of the origin and destination posts are updated accordingly; this includes when a new connection is created on the original posts and its metadata are initialized with default values.
 	
 * **Only connectable posts in the current language are shown in the P2P metaboxes**:
 
@@ -27,7 +31,7 @@ Installation
 
 **IMPORTANT**: 
 
-* The synchronization feature is *DISABLED* by default
+* The synchronization feature (both connections and connection metadata) is *DISABLED* by default
 * The language filtering feature is *ENABLED* by default
 
 Caveats
