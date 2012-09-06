@@ -2,6 +2,10 @@
 
 class P2P_WPML_UI {
 	public static function init() {
+		add_action('admin_init', array(__CLASS__, 'admin_init'));
+	}
+	
+	public static function admin_init() {
 		if(P2P_WPML_Admin::shouldFilter()) add_action( 'add_meta_boxes', array(__CLASS__, 'register_js') );
 	}
 	

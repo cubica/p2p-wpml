@@ -35,3 +35,4 @@ Caveats
 
 * Currently this plugin doesn't manage multiple connections between the same posts (a single connection will be created between the translated posts).
 * Currently the synchronization feature is *NOT* retroactive: all connections created before plugin activation will not be synchronized (it can still be done manually as without the plugin)
+* This plugin can break P2P cardinality checks, so you shouldn't specify a cardinality when creating connection types.

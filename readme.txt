@@ -50,7 +50,7 @@ This plugin has been only tested with the above version combinations; different 
 
 * Currently this plugin doesn't manage multiple connections between the same posts (a single connection will be created between the translated posts).
 * Currently the synchronization feature is NOT retroactive: all connections created before plugin activation will not be synchronized (it can still be done manually as without the plugin).
-* When you create a translation of an existing post, the synchronized connections will only appear after you'll save as draft or publish the translation.
+* This plugin can break P2P cardinality checks, so you shouldn't specify a cardinality when creating connection types.
 
 Links: [**Github**](https://github.com/cubica/p2p-wpml) | [Author's Site](http://www.cubica.eu) | [Twinpictures](http://plugins.twinpictures.de)
 
@@ -77,6 +77,8 @@ Answer
 = 1.2 =
 * Compatibility with P2P 1.4.1
 * Support for connections between posts and attachments/users
+* P2P meta synchronization
+* Added warning if WPML and/or P2P are not active
 * Bug fixing
 
 = 1.1 = 
