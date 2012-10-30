@@ -78,7 +78,7 @@ class P2P_WPML_Synchronizer {
 	}
 	
 	public static function change_capture_query_post_status($wp_query) {
-		if ($wp_query->_p2p_capture) {
+		if (isset($wp_query->_p2p_capture) || property_exists($wp_query, '_p2p_capture')) {
 			$wp_query->set('post_status', array(
 				'publish',
 				'pending', 
