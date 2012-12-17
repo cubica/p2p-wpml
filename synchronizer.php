@@ -268,8 +268,8 @@ class P2P_WPML_Synchronizer {
 		$tuples = array();
 		
 		$typeObj = p2p_type($connection->p2p_type);
-		$isFromPost = $typeObj->object['from'] == 'post';
-		$isToPost = $typeObj->object['to'] == 'post';
+		$isFromPost = $typeObj->side['from'];
+		$isToPost = $typeObj->side['to'];
 		$isFromTranslated = $isFromPost && self::is_post_translated($connection->p2p_from);
 		$isToTranslated = $isToPost && self::is_post_translated($connection->p2p_to);
 		
