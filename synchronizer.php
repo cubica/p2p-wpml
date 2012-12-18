@@ -144,8 +144,8 @@ class P2P_WPML_Synchronizer {
 			foreach($connectionTypes as $connectionTypeName => $connectionType) {
 				$connections = array();
 				
-				$isFromPost = $connectionType->object['from'] == 'post';
-				$isToPost = $connectionType->object['to'] == 'post';
+				$isFromPost = $connectionType->side['from'];
+				$isToPost = $connectionType->side['to'];
 				
 				if($isFromPost) {
 					// get the connections originating from the source translation
