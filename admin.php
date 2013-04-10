@@ -4,10 +4,11 @@ class P2P_WPML_Admin {
 	const SETTINGS_GROUP = 'p2p_wpml_settings';
 	const SYNCHRONIZE_OPTION_NAME = 'p2p_wpml_synchronize';
 	const SYNCHRONIZE_METADATA_OPTION_NAME = 'p2p_wpml_synchronize_metadata';
-	const FILTER_OPTION_NAME = 'p2p_wpml_filter';
+	const SYNCHRONIZE_CONNECTIONS_OPTION_NAME = 'p2p_wpml_synchronize_connections';
 	const DEFAULT_SYNCHRONIZE = '0';
 	const DEFAULT_SYNCHRONIZE_METADATA = '0';
-	const DEFAULT_FILTER = '1';
+	const DEFAULT_SYNCHRONIZE_CONNECTIONS = '0';
+	
 	const WEBSITE_URL = 'https://github.com/cubica/p2p-wpml';
 	
 	public static function init() {
@@ -25,12 +26,12 @@ class P2P_WPML_Admin {
 	public static function register_settings() {
 		register_setting( self::SETTINGS_GROUP, self::SYNCHRONIZE_OPTION_NAME );
 		register_setting( self::SETTINGS_GROUP, self::SYNCHRONIZE_METADATA_OPTION_NAME );
-		register_setting( self::SETTINGS_GROUP, self::FILTER_OPTION_NAME );
+		register_setting( self::SETTINGS_GROUP, self::SYNCHRONIZE_CONNECTIONS_OPTION_NAME );
 
 		add_settings_section('p2p-wpml-section', 'P2P WPML Settings', array(__CLASS__, 'get_settings_section_text'), __FILE__);
 		add_settings_field(self::SYNCHRONIZE_OPTION_NAME, 'Synchronize connections between translations', array(__CLASS__, 'create_synchronize_setting_field'), __FILE__, 'p2p-wpml-section');
 		add_settings_field(self::SYNCHRONIZE_METADATA_OPTION_NAME, 'Synchronize connection metadata between translations', array(__CLASS__, 'create_synchronize_metadata_setting_field'), __FILE__, 'p2p-wpml-section');
-		add_settings_field(self::FILTER_OPTION_NAME, 'Filter connectable items by current language', array(__CLASS__, 'create_filter_setting_field'), __FILE__, 'p2p-wpml-section');
+		add_settings_field(self::SYNCHRONIZE_CONNECTIONS_OPTION_NAME, 'Save Current P2P connections to Database', array(__CLASS__, 'create_synchronize_connections_setting_field'), __FILE__, 'p2p-wpml-section');
 	}
 	
 	public static function get_settings_section_text() {
@@ -45,8 +46,8 @@ class P2P_WPML_Admin {
 		echo self::create_checkbox_setting_field(self::SYNCHRONIZE_METADATA_OPTION_NAME, self::shouldSynchronizeMetadata());
 	}
 	
-	public static function create_filter_setting_field() {
-		echo self::create_checkbox_setting_field(self::FILTER_OPTION_NAME, self::shouldFilter());
+	public static function create_synchronize_connections_setting_field() {
+		echo self::create_checkbox_setting_field(self::SYNCHRONIZE_CONNECTIONS_OPTION_NAME, self::shouldSynchronizeConnections());
 	}
 	
 	private static function create_checkbox_setting_field($optionName, $value) {
@@ -78,7 +79,9 @@ class P2P_WPML_Admin {
 		return get_option(self::SYNCHRONIZE_METADATA_OPTION_NAME, self::DEFAULT_SYNCHRONIZE_METADATA) === '1';
 	}
 	
-	public static function shouldFilter() {
-		return get_option(self::FILTER_OPTION_NAME, self::DEFAULT_FILTER) === '1';
+	public static function shouldSynchronizeConnections() {
+		$connectionTypes = P2P_Connection_Type_Factory::get_all_instances();
+		update_option(self::SYNCHRONIZE_CONNECTIONS_OPTION_NAME, $connectionTypes);
+		return get_option(self::SYNCHRONIZE_CONNECTIONS_OPTION_NAME, self::DEFAULT_SYNCHRONIZE_CONNECTIONS) === $connectionTypes;
 	}
 }
