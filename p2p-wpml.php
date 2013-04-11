@@ -1,10 +1,12 @@
 <?php
 /*
 Plugin Name: Posts 2 Posts - WPML integration
+Plugin URI: https://github.com/cubica/p2p-wpml
 Description: A plugin for integrating Posts 2 Posts and WPML, solving some inconsistencies
-Version: 1.2.1
-Author: Lorenzo Carrara, Twinpictures, Baden03
+Version: 1.2.2
+Author: Lorenzo Carrara
 Author URI: http://www.cubica.eu
+License: GPL2
 */
 
 class P2P_WPML {
@@ -16,7 +18,6 @@ class P2P_WPML {
 	public static function init() {
 		if(self::checkRequiredPlugins()) {
 			$basePath = dirname( __FILE__ ) . DIRECTORY_SEPARATOR;
-			require_once $basePath . 'ui' . DIRECTORY_SEPARATOR . 'ui.php';
 			require_once $basePath . 'synchronizer.php';
 			require_once $basePath . 'admin.php';
 				

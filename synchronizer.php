@@ -1,7 +1,6 @@
 <?php
 class P2P_WPML_Synchronizer {
 	private static $editedPostIds = array();
-	
 	private static $inHandler = false;
 	
 	public static function init() {
@@ -13,8 +12,12 @@ class P2P_WPML_Synchronizer {
 			// add a edit_post action for catching post editing
 			add_action('edit_post', array(__CLASS__, 'edit_post'), 20, 1);
 			
+			// add a sync_post action for catching post creation
+			//add_action('icl_make_duplicate', array(__CLASS__, 'sync_post'), 10, 4);
+			
 			// add a save_post action for catching post creation
 			add_action('save_post', array(__CLASS__, 'save_post'), 20, 2);
+			
 			
 			// include auto-draft posts in p2p capture queries, so that synchronized connections appear
 			// when the translated post is in auto-draft status
@@ -26,6 +29,7 @@ class P2P_WPML_Synchronizer {
 			add_action('added_p2p_meta', array(__CLASS__, 'synchronize_added_metadata'), 20, 4);
 			add_action('deleted_p2p_meta', array(__CLASS__, 'synchronize_deleted_metadata'), 20, 4);
 			add_action('updated_p2p_meta', array(__CLASS__, 'synchronize_updated_metadata'), 20, 4);
+			
 		}
 	}
 	
@@ -39,7 +43,6 @@ class P2P_WPML_Synchronizer {
 		if(empty($connection)) return;
 		
 		$translatedConnectionIds = self::get_translated_connection_ids($connection);
-		
 		foreach($translatedConnectionIds as $translatedConnectionId) {
 			p2p_add_meta($translatedConnectionId, $key, $value);
 		}
@@ -58,7 +61,7 @@ class P2P_WPML_Synchronizer {
 		
 		foreach($translatedConnectionIds as $translatedConnectionId) {
 			p2p_delete_meta($translatedConnectionId, $key, $value);
-		}
+			}
 	}
 	
 	public static function synchronize_updated_metadata($metaIds, $connectionId, $key, $value) {
@@ -69,9 +72,9 @@ class P2P_WPML_Synchronizer {
 		// get the connection
 		$connection = p2p_get_connection($connectionId);
 		if(empty($connection)) return;
-	
+		
 		$translatedConnectionIds = self::get_translated_connection_ids($connection);
-	
+		
 		foreach($translatedConnectionIds as $translatedConnectionId) {
 			p2p_update_meta($translatedConnectionId, $key, $value);
 		}
@@ -93,6 +96,15 @@ class P2P_WPML_Synchronizer {
 	
 	public static function edit_post($postId) {
 		self::$editedPostIds[] = $postId;
+	}
+	
+	//public static function save_post($postId, $post) {
+	public static function sync_post($master_post_id, $lang, $postarr, $id) {
+		//self::exec_safe('save_post_internal', $postId, $post);
+		$connectionTypes = P2P_Connection_Type_Factory::get_all_instances();
+		if(empty($connectionTypes)){
+			$connectionTypes = get_option('p2p_wpml_synchronize_connections');
+		}
 	}
 	
 	public static function save_post($postId, $post) {
@@ -140,12 +152,14 @@ class P2P_WPML_Synchronizer {
 			
 			// get connection types
 			$connectionTypes = P2P_Connection_Type_Factory::get_all_instances();
-			
+			if(empty($connectionTypes)){
+				$connectionTypes = get_option('p2p_wpml_synchronize_connections');
+			}
 			foreach($connectionTypes as $connectionTypeName => $connectionType) {
 				$connections = array();
 				
-				$isFromPost = $connectionType->object['from'] == 'post';
-				$isToPost = $connectionType->object['to'] == 'post';
+				$isFromPost = $connectionType->side['from'];
+				$isToPost = $connectionType->side['to'];
 				
 				if($isFromPost) {
 					// get the connections originating from the source translation
@@ -266,10 +280,11 @@ class P2P_WPML_Synchronizer {
 	
 	private static function get_translated_tuples(&$connection) {
 		$tuples = array();
-		
 		$typeObj = p2p_type($connection->p2p_type);
-		$isFromPost = $typeObj->object['from'] == 'post';
-		$isToPost = $typeObj->object['to'] == 'post';
+
+		$isFromPost = $typeObj->side['from'];
+		$isToPost = $typeObj->side['to'];
+		
 		$isFromTranslated = $isFromPost && self::is_post_translated($connection->p2p_from);
 		$isToTranslated = $isToPost && self::is_post_translated($connection->p2p_to);
 		
@@ -280,8 +295,8 @@ class P2P_WPML_Synchronizer {
 				foreach($fromTranslationIds as $lang => $fromTranslationId) {
 					if(isset($toTranslationIds[$lang])) {
 						$tuples[] = array(
-							'from' => $fromTranslationId,
-							'to' => $toTranslationIds[$lang]
+										  'from' => $fromTranslationId,
+										  'to' => $toTranslationIds[$lang]
 						);
 					}
 				}
@@ -381,7 +396,7 @@ class P2P_WPML_Synchronizer {
 	private static function exec_safe() {
 		if(self::$inHandler === true) return null;
 		self::$inHandler = true;
-		
+
 		$args = func_get_args();
 		$function = array_shift($args);
 		$result = call_user_func_array(array(__CLASS__, $function), $args);
