@@ -18,7 +18,6 @@ class P2P_WPML {
 	public static function init() {
 		if(self::checkRequiredPlugins()) {
 			$basePath = dirname( __FILE__ ) . DIRECTORY_SEPARATOR;
-			require_once $basePath . 'ui' . DIRECTORY_SEPARATOR . 'ui.php';
 			require_once $basePath . 'synchronizer.php';
 			require_once $basePath . 'admin.php';
 				
