@@ -15,7 +15,12 @@ class P2P_WPML {
         if( ! defined('ICL_SITEPRESS_VERSION') ) return;
 
         // init our plugin on the p2p_init action hook
-        add_action('p2p_init', array(__CLASS__, 'init') );
+        if(isset($_REQUEST['icl_ajx_action']) && function_exists('_p2p_init') ){
+            add_action('init', array(__CLASS__, 'early_init') );
+        }
+        else {
+            add_action('p2p_init', array(__CLASS__, 'init') );
+        }
 
         // shows admin notices
         add_action('admin_notices', array(__CLASS__,'admin_notices') );
@@ -36,6 +41,11 @@ class P2P_WPML {
 
         do_action('p2p_wmpl_init');
 	}
+
+    public static function early_init () {
+        _p2p_init();
+        self::init();
+    }
 
     function admin_notices () {
 
