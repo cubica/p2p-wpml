@@ -161,7 +161,7 @@ class P2P_WPML_Synchronizer {
 						$metadata = p2p_get_meta($fromConnection->p2p_id);
 						
 						//check if the destination post is translated
-						if($isToPost && 'users' !== $connectionTypeName && self::is_post_translated($toPostId)) {
+						if($isToPost && !is_a($isToPost, 'P2P_Side_User') && self::is_post_translated($toPostId)) {
 							$toTranslationIds = self::get_post_translation_ids($toPostId);
 							if(isset($toTranslationIds[$lang])) $connections[] = array(
 								'from' => $postId,
@@ -194,7 +194,7 @@ class P2P_WPML_Synchronizer {
 						$metadata = p2p_get_meta($fromConnection->p2p_id);
 						
 						//check if the origin post is translated
-						if($isFromPost && self::is_post_translated($fromPostId)) {
+						if($isFromPost && !is_a($isFromPost, 'P2P_Side_User') && self::is_post_translated($fromPostId)) {
 							$fromTranslationIds = self::get_post_translation_ids($fromPostId);
 							if(isset($fromTranslationIds[$lang])) $connections[] = array(
 								'from' => $fromTranslationIds[$lang],
@@ -270,8 +270,8 @@ class P2P_WPML_Synchronizer {
 		$typeObj = p2p_type($connection->p2p_type);
 		$isFromPost = $typeObj->side['from'];
 		$isToPost = $typeObj->side['to'];
-		$isFromTranslated = $isFromPost && self::is_post_translated($connection->p2p_from);
-		$isToTranslated = $isToPost && 'users' !== $connection->p2p_type && self::is_post_translated($connection->p2p_to);
+		$isFromTranslated = $isFromPost && !is_a($isFromPost, 'P2P_Side_User') && self::is_post_translated($connection->p2p_from);
+		$isToTranslated = $isToPost && !is_a($isToPost, 'P2P_Side_User') && self::is_post_translated($connection->p2p_to);
 		
 		if($isFromTranslated) {
 			$fromTranslationIds = self::get_post_translation_ids($connection->p2p_from);
