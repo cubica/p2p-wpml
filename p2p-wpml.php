@@ -19,7 +19,7 @@ class P2P_WPML {
             add_action('init', array(__CLASS__, 'early_init') );
         }
         else {
-            add_action('p2p_init', array(__CLASS__, 'init') );
+            add_action('p2p_init', array(__CLASS__, 'init'), 14 );
         }
 
         // shows admin notices
