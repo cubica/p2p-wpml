@@ -336,7 +336,6 @@ class P2P_WPML_Synchronizer {
 	}
 	
 	private static function create_connections($type, $tuples, $metas=null) {
-		global $wpdb;
 		
 		foreach($tuples as $tuple) {
 			// check that the connection is unique
