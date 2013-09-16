@@ -230,7 +230,7 @@ class P2P_WPML_Synchronizer {
 		
 		$tuples = self::get_translated_tuples($connection);
 		
-		self::create_connections($connection->p2p_type, $tuples, $p2p_get_meta( $connectionId ));
+		self::create_connections($connection->p2p_type, $tuples, p2p_get_meta( $connectionId ));
 	}
 	
 	public static function p2p_delete($connectionIds) {
