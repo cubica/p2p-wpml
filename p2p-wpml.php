@@ -2,7 +2,7 @@
 /*
 Plugin Name: Posts 2 Posts - WPML integration
 Description: A plugin for integrating Posts 2 Posts and WPML, solving some inconsistencies
-Version: 1.2.2
+Version: 1.2.3
 Author: Lorenzo Carrara
 Author URI: http://www.cubica.eu
 */

@@ -230,7 +230,7 @@ class P2P_WPML_Synchronizer {
 		
 		$tuples = self::get_translated_tuples($connection);
 		
-		self::create_connections($connection->p2p_type, $tuples);
+		self::create_connections($connection->p2p_type, $tuples, p2p_get_meta( $connectionId ));
 	}
 	
 	public static function p2p_delete($connectionIds) {
@@ -335,8 +335,7 @@ class P2P_WPML_Synchronizer {
 		return $translationIds;
 	}
 	
-	private static function create_connections($type, $tuples) {
-		global $wpdb;
+	private static function create_connections($type, $tuples, $metas=null) {
 		
 		foreach($tuples as $tuple) {
 			// check that the connection is unique
@@ -349,8 +348,10 @@ class P2P_WPML_Synchronizer {
 			if(!p2p_connection_exists($type, $args)) {
 				$connectionId = p2p_create_connection($type, $args);
 				
-				if(!empty($tuple['meta'])) {
-					foreach($tuple['meta'] as $key => $values) {
+				$_metas = !empty($tuple['meta']) ? $tuple['meta'] : $metas;
+				
+				if(!empty($_metas)) {
+					foreach($_metas as $key => $values) {
 						foreach($values as $value) {
 							p2p_add_meta($connectionId, $key, $value);
 						}
