@@ -9,7 +9,7 @@ Author URI: http://www.cubica.eu
 
 class P2P_WPML {
 
-    public function run () {
+    public static function run () {
 
         // checks that WPML is installed and activated
         if( ! defined('ICL_SITEPRESS_VERSION') ) return;
@@ -47,12 +47,12 @@ class P2P_WPML {
         self::init();
     }
 
-    function admin_notices () {
+    public static function admin_notices () {
 
         // display only on plugins page
         if( $GLOBALS['hook_suffix'] !== 'plugins.php' ) return;
 
-        // could init our plugin, no mnotice to display
+        // could init our plugin, no notice to display
         if( did_action('p2p_wmpl_init') ) return;
 
         // wpml not installed and activated
