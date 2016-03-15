@@ -253,12 +253,12 @@ class P2P_WPML_Synchronizer {
 		
 		$connectionIds = array();
 		foreach($tuples as $tuple) {
-			$connectionIds += p2p_get_connections($connection->p2p_type, array(
+			$connectionIds = array_merge($connectionIds, p2p_get_connections($connection->p2p_type, array(
 				'direction' => 'from',
 				'from' => $tuple['from'],
 				'to' => $tuple['to'],
 				'fields' => 'p2p_id'
-			));
+			)));
 		}
 		
 		return array_unique($connectionIds);
