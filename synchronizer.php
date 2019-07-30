@@ -191,7 +191,7 @@ class P2P_WPML_Synchronizer {
 					// translation in the current language
 					foreach($toConnections as $toConnection) {
 						$fromPostId = $toConnection->p2p_from;
-						$metadata = p2p_get_meta($fromConnection->p2p_id);
+						$metadata = p2p_get_meta($toConnection->p2p_id);
 						
 						//check if the origin post is translated
 						if($isFromPost && !is_a($isFromPost, 'P2P_Side_User') && self::is_post_translated($fromPostId)) {
